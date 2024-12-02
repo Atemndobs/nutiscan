@@ -1,39 +1,36 @@
-# Build stage
-FROM node:18-alpine AS builder
-
+# Stage 1: Base Node.js image
+FROM node:20 AS base
 WORKDIR /app
 
-# Install build dependencies
+# Stage 2: Install dependencies
+FROM base AS deps
+ENV NODE_ENV=development
 RUN apk add --no-cache python3 make g++ pkgconfig cairo-dev pango-dev jpeg-dev giflib-dev librsvg-dev
-
-# Copy package files
-COPY package*.json ./
+COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy source code
+# Stage 3: Build the application
+FROM base AS builder
+WORKDIR /app
+ENV NODE_ENV=production
+RUN apk add --no-cache python3 make g++ pkgconfig cairo-dev pango-dev jpeg-dev giflib-dev librsvg-dev
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Build the application
 RUN npm run build
 
-# Production stage
-FROM node:18-alpine AS runner
-
-WORKDIR /app
-
+# Stage 4: Production runtime image
+FROM base AS runner
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
-# Install production dependencies
 RUN apk add --no-cache cairo pango jpeg giflib librsvg
 
-# Copy necessary files from builder
-COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Expose port
 EXPOSE 3000
 
-# Start the application
 CMD ["node", "server.js"]
