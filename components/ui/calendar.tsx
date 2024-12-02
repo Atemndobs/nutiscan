@@ -54,7 +54,7 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        CaptionNavigation: ({ ...props }) => (
+        Navigation: ({ ...props }) => (
           <div className="flex space-x-1">
             <button onClick={() => props.onPreviousClick?.()}>
               <ChevronLeft className="h-4 w-4" />
