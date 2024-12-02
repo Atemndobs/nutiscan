@@ -9,12 +9,20 @@ import { buttonVariants } from '@/components/ui/button';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
+type CustomComponents = React.ComponentProps<typeof DayPicker>['components'] & {
+  Navigation?: (props: {
+    onPreviousClick?: () => void;
+    onNextClick?: () => void;
+  }) => React.ReactNode;
+};
+
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  components,
   ...props
-}: CalendarProps) {
+}: CalendarProps & { components?: CustomComponents }) {
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -56,14 +64,23 @@ function Calendar({
       components={{
         Navigation: ({ ...props }) => (
           <div className="flex space-x-1">
-            <button onClick={() => props.onPreviousClick?.()}>
+            <button 
+              type="button" 
+              onClick={() => props.onPreviousClick?.()} 
+              aria-label="Previous month"
+            >
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <button onClick={() => props.onNextClick?.()}>
+            <button 
+              type="button" 
+              onClick={() => props.onNextClick?.()} 
+              aria-label="Next month"
+            >
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
         ),
+        ...components,
       }}
       {...props}
     />
