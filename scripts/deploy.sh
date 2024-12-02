@@ -1,10 +1,7 @@
 #!/bin/bash
 
-# Pull the latest image
-docker pull atemnbobs/nutriscan-pwa:latest
-
 # Stop and remove the existing container if it exists
-docker-compose down
+docker-compose down -v --rmi all
 
 # Start the new container
 docker-compose up -d
