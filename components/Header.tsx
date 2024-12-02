@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Search, ScanLine } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Dialog, DialogContent } from "./ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 import { Scanner } from "./Scanner";
 
 export function Header() {
@@ -29,6 +29,7 @@ export function Header() {
       
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-md">
+          <DialogTitle className="sr-only">Receipt Scanner</DialogTitle>
           <Scanner />
         </DialogContent>
       </Dialog>

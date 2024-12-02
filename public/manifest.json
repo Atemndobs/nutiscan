@@ -1,6 +1,6 @@
 {
-  "name": "Receipt Scanner",
-  "short_name": "ReceiptScan",
+  "name": "Nutriscan",
+  "short_name": "Nutriscan",
   "description": "Scan receipts and track calories",
   "start_url": "/",
   "display": "standalone",

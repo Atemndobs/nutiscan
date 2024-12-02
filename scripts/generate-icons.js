@@ -37,11 +37,11 @@ function generateIcon(size) {
   return canvas.toBuffer('image/png');
 }
 
-const sizes = [192, 512];
+const sizes = [192, 512, 180]; // Added 180x180 for apple-touch-icon
 
 sizes.forEach(size => {
   const buffer = generateIcon(size);
-  const filePath = path.join(__dirname, '..', 'public', `icon-${size}x${size}.png`);
-  fs.writeFileSync(filePath, buffer);
-  console.log(`Generated ${size}x${size} icon`);
+  const fileName = size === 180 ? 'apple-touch-icon.png' : `icon-${size}x${size}.png`;
+  fs.writeFileSync(path.join(__dirname, '..', 'public', fileName), buffer);
+  console.log(`Generated ${fileName}`);
 });
