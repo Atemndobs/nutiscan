@@ -3,6 +3,9 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
+# Install build dependencies
+RUN apk add --no-cache python3 make g++ pkgconfig cairo-dev pango-dev jpeg-dev giflib-dev librsvg-dev
+
 # Copy package files
 COPY package*.json ./
 RUN npm ci
@@ -19,6 +22,9 @@ FROM node:18-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+
+# Install production dependencies
+RUN apk add --no-cache cairo pango jpeg giflib librsvg
 
 # Copy necessary files from builder
 COPY --from=builder /app/next.config.js ./
