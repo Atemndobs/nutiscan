@@ -1,5 +1,5 @@
 # Stage 1: Base Node.js image
-FROM node:20 AS base
+FROM node:20-alpine AS base
 WORKDIR /app
 
 # Stage 2: Install dependencies
