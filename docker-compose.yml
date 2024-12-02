@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  nutriscan:
+    image: atemnbobs/nutriscan-pwa:latest
+    container_name: nutriscan-pwa
+    restart: unless-stopped
+    ports:
+      - "2025:3000"
+    environment:
+      - NODE_ENV=production
