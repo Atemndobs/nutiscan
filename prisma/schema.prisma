@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id              String   @id @default(cuid())
+  barcode         String   @default("unknown")
+  name            String
+  brand           String?
+  imageUrl        String?
+  ingredients     String?  // Stored as JSON string
+  allergens       String?  // Stored as JSON string
+  category        String?
+  quantity        String?
+  servingSize     String?
+  novaGroup       Int?
+  nutriscoreGrade String?
+  ecoScore        String?
+  
+  // Nutrients
+  energyKcal      Float?
+  carbohydrates   Float?
+  proteins        Float?
+  fat             Float?
+  fiber           Float?
+  sugars          Float?
+  salt            Float?
+
+  // Relations
+  scans           Scan[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([barcode])
+  @@index([category])
+}
+
+model Scan {
+  id        String   @id @default(cuid())
+  barcode   String   @default("unknown")
+  product   Product  @relation(fields: [barcode], references: [barcode])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([barcode])
+}
