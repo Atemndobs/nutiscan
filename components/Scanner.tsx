@@ -13,11 +13,18 @@ type ScannerState = 'camera' | 'processing' | 'review';
 interface ScanData {
   items: ScannedItem[];
   receiptDate?: string;
+  storeName: string;
+  storeAddress: string;
 }
 
 export function Scanner() {
   const [state, setState] = useState<ScannerState>('camera');
-  const [scanData, setScanData] = useState<ScanData>({ items: [], receiptDate: undefined });
+  const [scanData, setScanData] = useState<ScanData>({ 
+    items: [], 
+    receiptDate: undefined,
+    storeName: '',
+    storeAddress: ''
+  });
   const addItem = useReceiptStore((state) => state.addItem);
 
   // Test log on component mount
@@ -103,7 +110,9 @@ export function Scanner() {
 
       setScanData({
         items: itemsWithIds,
-        receiptDate: new Date().toISOString().split('T')[0]
+        receiptDate: new Date().toISOString().split('T')[0],
+        storeName: '',
+        storeAddress: ''
       });
       setState('review');
     } catch (error) {
@@ -114,20 +123,35 @@ export function Scanner() {
 
   const handleSaveItems = async (data: ScanData) => {
     try {
-      data.items.forEach((item) => {
-        addItem({
-          id: item.id,
-          name: item.name,
-          calories: 0,
-          category: item.category || "??",
-          date: data.receiptDate || new Date().toISOString().split('T')[0],
-          price: item.price ? parseFloat(String(item.price).replace(',', '.')) : 0
-        });
+      // Create a new scan in the database
+      const response = await fetch('/api/scans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          storeName: data.storeName,
+          storeAddress: data.storeAddress,
+          items: data.items.map(item => ({
+            name: item.name,
+            category: item.category || "Uncategorized",
+            price: item.price ? parseFloat(String(item.price).replace(',', '.')) : 0
+          }))
+        }),
       });
-      
+
+      if (!response.ok) {
+        throw new Error('Failed to save scan');
+      }
+
       // Reset the scanner
       setState('camera');
-      setScanData({ items: [], receiptDate: undefined });
+      setScanData({ 
+        items: [], 
+        receiptDate: undefined, 
+        storeName: '', 
+        storeAddress: '' 
+      });
     } catch (error) {
       console.error("Error saving items:", error);
     }
@@ -135,11 +159,8 @@ export function Scanner() {
 
   const handleCancel = () => {
     setState('camera');
-    setScanData({ items: [], receiptDate: undefined });
-type ScanData = {
-  items: ScannedItem[];
-  receiptDate?: string;
-}  };
+    setScanData({ items: [], receiptDate: undefined, storeName: '', storeAddress: '' });
+  };
 
   const isMobileDevice = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
