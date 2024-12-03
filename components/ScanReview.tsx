@@ -24,8 +24,15 @@ interface ScanReviewProps {
   data: {
     items: ScannedItem[];
     receiptDate?: string;
+    storeName: string;
+    storeAddress: string;
   };
-  onSave: (data: { items: ScannedItem[]; receiptDate?: string }) => void;
+  onSave: (data: { 
+    items: ScannedItem[]; 
+    receiptDate?: string;
+    storeName: string;
+    storeAddress: string;
+  }) => void;
   onCancel: () => void;
 }
 
@@ -34,6 +41,8 @@ export function ScanReview({ data, onSave, onCancel }: ScanReviewProps) {
   const [receiptDate, setReceiptDate] = useState<string>(
     data.receiptDate || new Date().toISOString().split('T')[0]
   );
+  const [storeName, setStoreName] = useState(data.storeName);
+  const [storeAddress, setStoreAddress] = useState(data.storeAddress);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const handleEdit = (id: string) => {
@@ -45,14 +54,12 @@ export function ScanReview({ data, onSave, onCancel }: ScanReviewProps) {
   };
 
   const handleSave = () => {
-    onSave({ items, receiptDate });
+    onSave({ items, receiptDate, storeName, storeAddress });
   };
 
   const handleUpdateItem = (id: string, field: keyof ScannedItem, value: string | number) => {
     setItems(items.map(item => 
-      item.id === id 
-        ? { ...item, [field]: field === 'price' ? Number(value) : value }
-        : item
+      item.id === id ? { ...item, [field]: field === 'price' ? Number(value) : value } : item
     ));
   };
 
@@ -61,15 +68,37 @@ export function ScanReview({ data, onSave, onCancel }: ScanReviewProps) {
   };
 
   return (
-    <div className="space-y-4 max-h-[calc(100vh-6rem)] flex flex-col -mx-8">
-      <div className="px-2">
-        <Input
-          type="date"
-          value={receiptDate}
-          onChange={(e) => setReceiptDate(e.target.value)}
-          className="w-full"
-        />
+    <div className="space-y-6 max-h-[calc(100vh-6rem)] flex flex-col -mx-8">
+      <div className="grid gap-4">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium min-w-[100px]">Store Name:</span>
+          <Input
+            value={storeName}
+            onChange={(e) => setStoreName(e.target.value)}
+            placeholder="Enter store name"
+            className="flex-1"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium min-w-[100px]">Address:</span>
+          <Input
+            value={storeAddress}
+            onChange={(e) => setStoreAddress(e.target.value)}
+            placeholder="Enter store address"
+            className="flex-1"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium min-w-[100px]">Date:</span>
+          <Input
+            type="date"
+            value={receiptDate}
+            onChange={(e) => setReceiptDate(e.target.value)}
+            className="flex-1"
+          />
+        </div>
       </div>
+
       <div className="border-x-0 border-y flex-1 overflow-auto">
         <Table className="w-full">
           <TableHeader className="sticky top-0 bg-background z-10">
