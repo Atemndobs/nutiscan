@@ -5,11 +5,16 @@ export async function GET() {
   try {
     const scans = await prisma.scan.findMany({
       include: {
-        products: {
-          orderBy: {
-            name: 'asc',
-          },
-        },
+        product: {
+          select: {
+            id: true,
+            name: true,
+            barcode: true,
+            brand: true,
+            category: true,
+            imageUrl: true,
+          }
+        }
       },
       orderBy: {
         createdAt: 'desc',

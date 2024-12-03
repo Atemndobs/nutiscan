@@ -11,7 +11,7 @@ export async function GET() {
         createdAt: 'desc'
       },
       include: {
-        products: {
+        product: {
           select: {
             category: true
           }
@@ -22,11 +22,9 @@ export async function GET() {
     // Calculate top category for each scan
     const scansWithTopCategory = recentScans.map(scan => {
       const categoryCount: Record<string, number> = {};
-      scan.products.forEach(product => {
-        if (product.category) {
-          categoryCount[product.category] = (categoryCount[product.category] || 0) + 1;
-        }
-      });
+      if (scan.product.category) {
+        categoryCount[scan.product.category] = 1;
+      }
 
       const topCategory = Object.entries(categoryCount)
         .sort(([, a], [, b]) => b - a)
@@ -38,7 +36,7 @@ export async function GET() {
         address: scan.address,
         createdAt: scan.createdAt,
         topCategory,
-        productCount: scan.products.length
+        productCount: scan.product ? 1 : 0
       };
     });
 

@@ -13,7 +13,6 @@ import {
 import { Store, MapPin, Calendar, ChevronDown, ChevronUp } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { categories } from "@/lib/categories";
-import { CategoryStatsModal } from "./CategoryStatsModal";
 import { Product, Scan } from "@/lib/types";
 import { startOfWeek, startOfMonth, startOfYear, isAfter } from "date-fns";
 
@@ -68,20 +67,8 @@ export function HistoryList({ searchQuery, timeRange }: HistoryListProps) {
       );
     }
     const category = categories.find(c => c.name === categoryName);
-    if (!category) {
-      return (
-        <div 
-          className="flex items-center gap-2 cursor-pointer hover:opacity-80"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleCategoryClick(categoryName);
-          }}
-        >
-          <span className="text-muted-foreground">❓</span>
-          <span className="text-sm text-muted-foreground">Uncategorized</span>
-        </div>
-      );
-    }
+    if (!category) return null;
+    
     const Icon = category.icon;
     return (
       <div 
@@ -97,46 +84,43 @@ export function HistoryList({ searchQuery, timeRange }: HistoryListProps) {
     );
   };
 
-  const filterScans = (scans: Scan[]): Scan[] => {
-    return scans
-      .filter(scan => {
-        // Time range filter
-        const scanDate = new Date(scan.createdAt);
-        const now = new Date();
-        
-        switch (timeRange) {
-          case 'week':
-            return isAfter(scanDate, startOfWeek(now));
-          case 'month':
-            return isAfter(scanDate, startOfMonth(now));
-          case 'year':
-            return isAfter(scanDate, startOfYear(now));
-          default:
-            return true;
-        }
-      })
-      .filter(scan => {
-        // Search query filter
-        if (!searchQuery) return true;
-        const query = searchQuery.toLowerCase();
-        
-        // Search in store name and address
-        if (scan.storeName.toLowerCase().includes(query)) return true;
-        if (scan.address.toLowerCase().includes(query)) return true;
-        
-        // Search in products
-        return scan.products.some(product => 
-          product.name.toLowerCase().includes(query) ||
-          product.category?.toLowerCase().includes(query)
-        );
-      });
-  };
+  const filteredScans = scans.filter(scan => {
+    // Time range filter
+    const scanDate = new Date(scan.createdAt);
+    const now = new Date();
+    
+    let passesTimeFilter = true;
+    switch (timeRange) {
+      case 'week':
+        passesTimeFilter = isAfter(scanDate, startOfWeek(now));
+        break;
+      case 'month':
+        passesTimeFilter = isAfter(scanDate, startOfMonth(now));
+        break;
+      case 'year':
+        passesTimeFilter = isAfter(scanDate, startOfYear(now));
+        break;
+    }
+    
+    if (!passesTimeFilter) return false;
+    
+    // Search query filter
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    
+    // Search in product name and category
+    const product = scan.product;
+    if (!product) return false;
+    
+    if (product.name.toLowerCase().includes(query)) return true;
+    if (product.category?.toLowerCase().includes(query)) return true;
+    
+    return false;
+  });
 
   if (loading) {
     return <div>Loading scan history...</div>;
   }
-
-  const filteredScans = filterScans(scans);
 
   if (filteredScans.length === 0) {
     return (
@@ -145,9 +129,6 @@ export function HistoryList({ searchQuery, timeRange }: HistoryListProps) {
       </div>
     );
   }
-
-  // Collect all products from filtered scans
-  const allProducts = filteredScans.flatMap(scan => scan.products);
 
   return (
     <div className="space-y-4">
@@ -160,14 +141,7 @@ export function HistoryList({ searchQuery, timeRange }: HistoryListProps) {
             <div className="space-y-2 flex-1">
               <div className="flex items-center gap-2">
                 <Store className="h-5 w-5" />
-                <span className="font-medium">{scan.storeName}</span>
-                <span className="text-sm text-muted-foreground">
-                  ({scan.products.length} items)
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4" />
-                <span>{scan.address}</span>
+                <span className="font-medium">{scan.product?.name || 'Unknown Product'}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Calendar className="h-4 w-4" />
@@ -186,36 +160,23 @@ export function HistoryList({ searchQuery, timeRange }: HistoryListProps) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Item</TableHead>
+                    <TableHead>Item Details</TableHead>
                     <TableHead>Category</TableHead>
-                    <TableHead className="text-right">Price</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {scan.products.map((product) => (
-                    <TableRow key={product.id}>
-                      <TableCell>{product.name}</TableCell>
-                      <TableCell>
-                        {getCategoryIcon(product.category)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {product.price ? `$${product.price.toFixed(2)}` : '-'}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  <TableRow>
+                    <TableCell>{scan.product?.name || 'Unknown Product'}</TableCell>
+                    <TableCell>
+                      {getCategoryIcon(scan.product?.category)}
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </div>
           )}
         </Card>
       ))}
-
-      <CategoryStatsModal
-        isOpen={selectedCategory !== null}
-        onClose={() => setSelectedCategory(null)}
-        categoryName={selectedCategory}
-        products={allProducts}
-      />
     </div>
   );
 }

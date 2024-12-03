@@ -8,20 +8,45 @@ datasource db {
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  name        String
-  category    String?
-  scan        Scan     @relation(fields: [scanId], references: [id])
-  scanId      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(cuid())
+  barcode         String   @default("unknown")
+  name            String
+  brand           String?
+  imageUrl        String?
+  ingredients     String?  // Stored as JSON string
+  allergens       String?  // Stored as JSON string
+  category        String?
+  quantity        String?
+  servingSize     String?
+  novaGroup       Int?
+  nutriscoreGrade String?
+  ecoScore        String?
+  
+  // Nutrients
+  energyKcal      Float?
+  carbohydrates   Float?
+  proteins        Float?
+  fat             Float?
+  fiber           Float?
+  sugars          Float?
+  salt            Float?
+
+  // Relations
+  scans           Scan[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([barcode])
+  @@index([category])
 }
 
 model Scan {
-  id           String    @id @default(cuid())
-  storeName    String
-  address      String
-  products     Product[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  barcode   String   @default("unknown")
+  product   Product  @relation(fields: [barcode], references: [barcode])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([barcode])
 }

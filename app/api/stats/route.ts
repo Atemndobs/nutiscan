@@ -16,7 +16,12 @@ export async function GET() {
         }
       },
       include: {
-        scan: true
+        scans: {
+          select: {
+            id: true,
+            createdAt: true,
+          }
+        }
       },
       orderBy: {
         createdAt: 'asc'
@@ -29,8 +34,10 @@ export async function GET() {
       name: product.name,
       category: product.category || '',
       date: product.createdAt.toISOString(),
-      storeName: product.scan.storeName,
-      address: product.scan.address
+      scans: product.scans.map(scan => ({
+        id: scan.id,
+        date: scan.createdAt.toISOString()
+      }))
     }));
 
     // Calculate stats
