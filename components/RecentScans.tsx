@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import Dexie from 'dexie';
 import { db, Scan } from '@/lib/db';
 import { Button } from "./ui/button";
 import { ChevronRight, MapPin, Calendar, ShoppingBag, ChevronDown, ChevronUp, Tag, Euro } from "lucide-react";

@@ -15,20 +15,13 @@ import {
 } from "@/components/ui/table";
 import { formatDate } from '@/lib/utils';
 import { MapPin, Store } from 'lucide-react';
+import { Scan } from '@/lib/db';
 
 interface Product {
   id: string;
   name: string;
   category: string | null;
   price: number | null;
-}
-
-interface Scan {
-  id: string;
-  storeName: string;
-  address: string;
-  createdAt: string;
-  products: Product[];
 }
 
 interface ScanDetailsModalProps {

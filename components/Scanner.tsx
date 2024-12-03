@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { scanReceipt, parseReceiptText, ScannedItem } from "@/lib/scanner";
 import { useReceiptStore } from "@/lib/store";
 import { v4 as uuidv4 } from 'uuid';
-import { db, Scan, Product } from '@/lib/db';
+import { db, Scan, Product } from '@/lib/db'; // Corrected import for Dexie
 
 type ScannerState = 'camera' | 'processing' | 'review';
 
