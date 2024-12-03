@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { ChevronRight, MapPin, Calendar, ShoppingBag, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronRight, MapPin, Calendar, ShoppingBag, ChevronDown, ChevronUp, Tag, Euro } from "lucide-react";
 import { categories } from "@/lib/categories";
 import Link from "next/link";
 import { Card } from '@/components/ui/card';
@@ -61,6 +61,13 @@ export function RecentScans() {
     } catch (error) {
       console.error('Error fetching scan details:', error);
     }
+  };
+
+  const getCategoryIcon = (category: string | null) => {
+    const categoryData = categories.find(cat => cat.name === category);
+    const CategoryIcon = categoryData ? categoryData.icon : Tag;
+    const iconColor = categoryData ? categoryData.color : 'text-gray-500';
+    return { CategoryIcon, iconColor };
   };
 
   if (loading) {
@@ -131,15 +138,24 @@ export function RecentScans() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {scan.products.map((product) => (
-                      <TableRow key={product.id}>
-                        <TableCell>{product.name}</TableCell>
-                        <TableCell>{product.category || 'Uncategorized'}</TableCell>
-                        <TableCell className="text-right">
-                          {product.price ? `$${product.price.toFixed(2)}` : '-'}
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {scan.products.map((product) => {
+                      const { CategoryIcon, iconColor } = getCategoryIcon(product.category);
+                      return (
+                        <TableRow key={product.id}>
+                          <TableCell className="w-full max-w-[120px] line-clamp-2 overflow-hidden text-ellipsis">{product.name}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <CategoryIcon className={`h-4 w-4 ${iconColor}`} />
+                              {product.category || '??'}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right flex items-center justify-end gap-1">
+                            <Euro className="h-4 w-4 text-green-500" />
+                            {product.price ? `${product.price.toFixed(2)}` : '-'}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>

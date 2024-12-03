@@ -13,7 +13,10 @@ export async function GET() {
       include: {
         products: {
           select: {
-            category: true
+            id: true,
+            name: true,
+            category: true,
+            price: true
           }
         }
       }
@@ -38,7 +41,8 @@ export async function GET() {
         address: scan.address,
         createdAt: scan.createdAt,
         topCategory,
-        productCount: scan.products.length
+        productCount: scan.products.length,
+        products: scan.products  // Include full product details
       };
     });
 

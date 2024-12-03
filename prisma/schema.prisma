@@ -11,6 +11,7 @@ model Product {
   id          String   @id @default(cuid())
   name        String
   category    String?
+  price       Float?   @default(0)
   scan        Scan     @relation(fields: [scanId], references: [id])
   scanId      String
   createdAt   DateTime @default(now())

@@ -132,11 +132,26 @@ export function Scanner() {
         body: JSON.stringify({
           storeName: data.storeName,
           storeAddress: data.storeAddress,
-          items: data.items.map(item => ({
-            name: item.name,
-            category: item.category || "Uncategorized",
-            price: item.price ? parseFloat(String(item.price).replace(',', '.')) : 0
-          }))
+          items: data.items.map(item => {
+            // More robust price parsing
+            let price = 0;
+            if (item.price !== undefined && item.price !== null) {
+              // Convert to string, replace comma with dot, parse as float
+              const priceStr = String(item.price).replace(',', '.');
+              const parsedPrice = parseFloat(priceStr);
+              
+              // Only use the parsed price if it's a valid number
+              if (!isNaN(parsedPrice) && parsedPrice > 0) {
+                price = parsedPrice;
+              }
+            }
+            
+            return {
+              name: item.name,
+              category: item.category || "??",
+              price: price
+            };
+          })
         }),
       });
 

@@ -15,6 +15,7 @@ export async function POST(request: Request) {
           create: items.map((item: any) => ({
             name: item.name,
             category: item.category,
+            price: item.price || 0  // Explicitly add price, defaulting to 0 if not provided
           }))
         }
       },

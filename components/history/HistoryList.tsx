@@ -63,7 +63,7 @@ export function HistoryList({ searchQuery, timeRange }: HistoryListProps) {
           }}
         >
           <span className="text-muted-foreground">❓</span>
-          <span className="text-sm text-muted-foreground">Uncategorized</span>
+          <span className="text-sm text-muted-foreground">??</span>
         </div>
       );
     }
@@ -78,7 +78,7 @@ export function HistoryList({ searchQuery, timeRange }: HistoryListProps) {
           }}
         >
           <span className="text-muted-foreground">❓</span>
-          <span className="text-sm text-muted-foreground">Uncategorized</span>
+          <span className="text-sm text-muted-foreground">??</span>
         </div>
       );
     }
@@ -194,12 +194,12 @@ export function HistoryList({ searchQuery, timeRange }: HistoryListProps) {
                 <TableBody>
                   {scan.products.map((product) => (
                     <TableRow key={product.id}>
-                      <TableCell>{product.name}</TableCell>
+                      <TableCell className="w-full max-w-[120px] line-clamp-2 overflow-hidden text-ellipsis">{product.name}</TableCell>
                       <TableCell>
                         {getCategoryIcon(product.category)}
                       </TableCell>
                       <TableCell className="text-right">
-                        {product.price ? `$${product.price.toFixed(2)}` : '-'}
+                        {product.price ? `${product.price.toFixed(2)}` : '-'}
                       </TableCell>
                     </TableRow>
                   ))}

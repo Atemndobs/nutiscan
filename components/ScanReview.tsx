@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Pencil, Trash2, Save, X, ShoppingBasket, Tags, DollarSign, Settings } from 'lucide-react';
+import { Pencil, Trash2, Save, X, ShoppingBasket, Tags, Euro, Settings } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -110,7 +110,7 @@ export function ScanReview({ data, onSave, onCancel }: ScanReviewProps) {
                 <Tags className="w-4 h-4" aria-label="Category" />
               </TableHead>
               <TableHead className="w-[25%] text-right">
-                <DollarSign className="w-4 h-4 ml-auto" aria-label="Price" />
+                <Euro className="w-4 h-4 ml-auto" aria-label="Price" />
               </TableHead>
               <TableHead className="w-[15%]">
                 <Settings className="w-4 h-4 ml-auto" aria-label="Actions" />
@@ -167,7 +167,7 @@ export function ScanReview({ data, onSave, onCancel }: ScanReviewProps) {
                       className="w-full text-right"
                     />
                   ) : (
-                    item.price?.toFixed(2) || '-'
+                    item.price ? `${item.price.toFixed(2)}` : '-'
                   )}
                 </TableCell>
                 <TableCell>

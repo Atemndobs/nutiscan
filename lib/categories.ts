@@ -19,7 +19,7 @@ import {
 export const categories = [
   // Fresh Products
   { name: "Fruits", icon: Apple, color: "text-green-500", description: "Fresh fruits and dried fruits" },
-  { name: "Vegetables", icon: Carrot, color: "text-orange-700", description: "Fresh and frozen vegetables" },
+  { name: "Veges", icon: Carrot, color: "text-orange-700", description: "Fresh and frozen vegetables" },
   { name: "Meat", icon: Beef, color: "text-red-500", description: "Beef, pork, poultry, and other meats" },
   { name: "Seafood", icon: Fish, color: "text-blue-700", description: "Fish, shellfish, and seafood products" },
   { name: "Dairy", icon: Milk, color: "text-blue-500", description: "Milk, cheese, yogurt, and eggs" },
@@ -30,7 +30,7 @@ export const categories = [
   
   // Pantry Items
   { name: "Oils", icon: Droplet, color: "text-yellow-500", description: "Cooking oils, vinegar, and fats" },
-  { name: "Condiments", icon: Soup, color: "text-gray-500", description: "Sauces, spices, and seasonings" },
+  { name: "Spices", icon: Soup, color: "text-gray-500", description: "Sauces, spices, and seasonings" },
   // { name: "Canned & Preserved", icon: Soup, color: "text-orange-600", description: "Canned vegetables, soups, and preserved foods" },
   
   // Snacks & Sweets

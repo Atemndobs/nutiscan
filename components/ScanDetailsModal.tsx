@@ -72,8 +72,8 @@ export function ScanDetailsModal({ scan, open, onOpenChange }: ScanDetailsModalP
           <TableBody>
             {scan.products.map((product) => (
               <TableRow key={product.id}>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.category || 'Uncategorized'}</TableCell>
+                <TableCell className="w-full max-w-[120px] line-clamp-2 overflow-hidden text-ellipsis">{product.name}</TableCell>
+                <TableCell>{product.category || '??'}</TableCell>
                 <TableCell className="text-right">
                   {product.price ? `$${product.price.toFixed(2)}` : '-'}
                 </TableCell>
