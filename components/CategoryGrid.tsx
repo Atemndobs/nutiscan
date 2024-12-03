@@ -51,22 +51,29 @@ export function CategoryGrid({ showAll = false }: CategoryGridProps) {
         )}
       </div>
       
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {displayCategories.map((category) => (
-          <Button
-            key={category.name}
-            variant="secondary"
-            className="flex flex-col items-center gap-2 h-auto py-4 glass-card relative group hover:bg-secondary/80"
+          <Link 
+            key={category.name} 
+            href={`/categories/${encodeURIComponent(category.name)}`}
+            className="block w-full"
           >
-            <category.icon 
-              className={`w-6 h-6 ${category.color} transition-colors group-hover:scale-110`} 
-              strokeWidth={2} 
-            />
-            <span className="text-sm font-medium">{category.name}</span>
-            <span className="text-xs text-muted-foreground">
-              {loading ? '...' : `${stats[category.name] || 0} items`}
-            </span>
-          </Button>
+            <div className="group h-full">
+              <div className="relative h-full p-4 rounded-lg bg-card hover:bg-accent transition-colors border shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2.5 rounded-lg ${category.color} bg-opacity-10`}>
+                    <category.icon className="w-5 h-5" strokeWidth={2} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-medium truncate">{category.name}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {loading ? "Loading..." : `${stats[category.name] || 0} items`}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Link>
         ))}
       </div>
     </div>
