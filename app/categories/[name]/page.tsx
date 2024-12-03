@@ -71,7 +71,7 @@ export default function CategoryPage({ params }: { params: { name: string } }) {
                 <div className="flex justify-between items-start">
                   <h3 className="font-medium">{item.name}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {formatDate(new Date(item.date))}
+                    {formatDate(item.date)}
                   </p>
                 </div>
                 <div className="text-sm text-muted-foreground">
