@@ -1,41 +1,43 @@
-# NutriScan
+# NutiScan: Local-First Receipt Tracking
 
-## Deployment
+## Local-First Architecture
 
-The application is deployed using GitHub Actions with direct server deployment. No DockerHub is required as images are built directly on the server.
+NutiScan now implements a local-first approach using Dexie.js, providing:
 
-### Prerequisites
+- 🚀 Instant, offline-first data storage
+- 💾 Client-side IndexedDB persistence
+- 🔄 Future-ready synchronization capabilities
 
-- SSH access to the deployment server
-- GitHub repository secret: `DEPLOY_SSH_KEY` for server authentication
+### Key Features
 
-### Deployment Process
+- Local data storage with Dexie.js
+- Offline functionality
+- Easy data synchronization
+- Performance-optimized local queries
 
-1. Push to the `main` branch triggers the deployment workflow
-2. GitHub Actions:
-   - Connects to server via SSH
-   - Pulls latest code
-   - Builds Docker image locally
-   - Deploys using docker-compose
+### Database Structure
 
-### Manual Deployment
+- **Scans**: Store receipt metadata
+- **Products**: Store individual product details
+- Automatic relationship management
 
-If needed, you can manually deploy using the deploy script:
+### Sync Strategy
+
+1. Local-first data storage
+2. Seamless offline support
+3. Prepared for future remote sync
+
+### Getting Started
 
 ```bash
-./scripts/deploy.sh
+npm install dexie dexie-observable dexie-syncable
 ```
 
-This will:
-- Stop and remove existing containers (`docker-compose down -v --rmi all`)
-- Start new containers (`docker-compose up -d`)
-- Clean up unused images
+### Future Roadmap
 
-### Server Configuration
-
-- Server: nutriscan.atemkeng.de
-- Application Path: `/home/atem/docker/nutriscan`
-- Port: 2025 (mapped to container port 3000)
+- Remote database synchronization
+- Cloud backup options
+- Enhanced offline capabilities
 
 ## Development
 

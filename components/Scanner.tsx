@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { scanReceipt, parseReceiptText, ScannedItem } from "@/lib/scanner";
 import { useReceiptStore } from "@/lib/store";
 import { v4 as uuidv4 } from 'uuid';
+import { db, Scan, Product } from '@/lib/db';
 
 type ScannerState = 'camera' | 'processing' | 'review';
 
@@ -121,54 +122,33 @@ export function Scanner() {
     }
   };
 
-  const handleSaveItems = async (data: ScanData) => {
+  const handleSaveItems = async () => {
+    if (!scanData.items.length) return;
+
     try {
-      // Create a new scan in the database
-      const response = await fetch('/api/scans', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          storeName: data.storeName,
-          storeAddress: data.storeAddress,
-          items: data.items.map(item => {
-            // More robust price parsing
-            let price = 0;
-            if (item.price !== undefined && item.price !== null) {
-              // Convert to string, replace comma with dot, parse as float
-              const priceStr = String(item.price).replace(',', '.');
-              const parsedPrice = parseFloat(priceStr);
-              
-              // Only use the parsed price if it's a valid number
-              if (!isNaN(parsedPrice) && parsedPrice > 0) {
-                price = parsedPrice;
-              }
-            }
-            
-            return {
-              name: item.name,
-              category: item.category || "??",
-              price: price
-            };
-          })
-        }),
-      });
+      const newScan: Scan = {
+        storeName: scanData.storeName || 'Unknown Store',
+        address: scanData.storeAddress || '',
+        products: scanData.items.map(item => ({
+          name: item.name,
+          category: item.category || '??',
+          price: parseFloat(item.price) || 0
+        }))
+      };
 
-      if (!response.ok) {
-        throw new Error('Failed to save scan');
-      }
+      // Save scan and products to Dexie
+      await db.addScanWithProducts(newScan);
 
-      // Reset the scanner
-      setState('camera');
+      // Reset state
       setScanData({ 
         items: [], 
         receiptDate: undefined, 
         storeName: '', 
         storeAddress: '' 
       });
+      setState('camera');
     } catch (error) {
-      console.error("Error saving items:", error);
+      console.error('Error saving scan:', error);
     }
   };
 

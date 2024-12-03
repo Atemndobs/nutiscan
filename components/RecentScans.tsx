@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
+import { db, Scan } from '@/lib/db';
 import { Button } from "./ui/button";
 import { ChevronRight, MapPin, Calendar, ShoppingBag, ChevronDown, ChevronUp, Tag, Euro } from "lucide-react";
 import { categories } from "@/lib/categories";
@@ -30,20 +31,19 @@ export function RecentScans() {
   const [expandedScanId, setExpandedScanId] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchRecentScans = async () => {
+      try {
+        const scans = await db.getRecentScans();
+        setScans(scans);
+      } catch (error) {
+        console.error('Error fetching recent scans:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchRecentScans();
   }, []);
-
-  const fetchRecentScans = async () => {
-    try {
-      const response = await fetch('/api/scans/recent');
-      const data = await response.json();
-      setScans(data);
-    } catch (error) {
-      console.error('Error fetching recent scans:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleScanClick = async (scanId: string) => {
     if (expandedScanId === scanId) {
