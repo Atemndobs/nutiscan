@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   nutriscan:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: atemnbobs/nutriscan-amd64:v0.0.1
     container_name: nutriscan-pwa
     restart: unless-stopped
     ports:
