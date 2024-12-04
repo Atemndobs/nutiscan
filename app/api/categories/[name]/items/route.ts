@@ -3,6 +3,17 @@ import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
+interface ProductWithScan {
+  id: string;
+  name: string;
+  category: string | null;
+  createdAt: Date;
+  scan: {
+    storeName: string;
+    address: string;
+  };
+}
+
 export async function GET(
   request: Request,
   { params }: { params: { name: string } }
@@ -32,7 +43,7 @@ export async function GET(
     });
 
     // Transform the data to match the expected format
-    const items = products.map(product => ({
+    const items = products.map((product: ProductWithScan) => ({
       id: product.id,
       name: product.name,
       category: product.category || '',
